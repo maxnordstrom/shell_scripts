@@ -14,8 +14,8 @@ MIN_USER_ID = 1000
 MAX_USER_ID = 60000
 PASSWD_FILE = "/etc/passwd"
 SHADOW_FILE = "/etc/shadow"
-WORDLIST_FILE = "/usr/share/wordlists/rockyou.txt"  # Vanlig sökväg till wordlist
-OUTPUT_DIR = "./reports" # Skapar en mapp i samma katalog där scriptet körs
+WORDLIST_FILE = "/usr/share/wordlists/seclists/Passwords/Common-Credentials/500-worst-passwords.txt"  # Sökväg till wordlist (en inte allt för stor sådan...)
+OUTPUT_DIR = "./output" # Skapar en mapp i samma katalog där scriptet körs
 REPORT_FILE = f"weak_password_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt" # Gör varje rapportnamn unikt med timestamp
 
 def print_header():
@@ -151,8 +151,8 @@ def run_john_the_ripper(shadow_file, wordlist):
     print("This may take some time depending on the wordlist size.")
     print("=" * 60)
     
-    # Run John the Ripper
-    command = ["john", "--wordlist=" + wordlist, shadow_file]
+    # Kör John the Ripper. Kommandot innehåller en variant som gör att John gör en fresh run varje gång och inte kollar i dess pot-fil.
+    command = ["john", "--format=crypt", "--wordlist=" + wordlist, "--pot=/dev/null", shadow_file]
     
     try:
         print(f"\nExecuting: {' '.join(command)}\n")
