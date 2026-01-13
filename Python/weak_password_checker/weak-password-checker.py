@@ -9,14 +9,14 @@ import os
 import subprocess
 import datetime
 
-# Configuration
+# Konfiguration
 MIN_USER_ID = 1000
 MAX_USER_ID = 60000
 PASSWD_FILE = "/etc/passwd"
 SHADOW_FILE = "/etc/shadow"
-WORDLIST_FILE = "/usr/share/wordlists/rockyou.txt"  # Common wordlist location
-OUTPUT_DIR = "/tmp/password_audit"
-REPORT_FILE = "weak_password_report.txt"
+WORDLIST_FILE = "/usr/share/wordlists/rockyou.txt"  # Vanlig sökväg till wordlist
+OUTPUT_DIR = "./reports" # Skapar en mapp i samma katalog där scriptet körs
+REPORT_FILE = f"weak_password_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt" # Gör varje rapportnamn unikt med timestamp
 
 def print_header():
     """Print the script header"""
