@@ -151,12 +151,15 @@ def run_john_the_ripper(shadow_file, wordlist):
     print("This may take some time depending on the wordlist size.")
     print("=" * 60)
     
-    # Kör John the Ripper. Kommandot innehåller en variant som gör att John gör en fresh run varje gång och inte kollar i dess pot-fil.
-    command = ["john", "--format=crypt", "--wordlist=" + wordlist, "--pot=/dev/null", shadow_file]
+    # Kör John the Ripper. Använder ett alternativ så att john inte skapar någon loggfil.
+    command = ["john", "--format=crypt", "--wordlist=" + wordlist, "--no-log", shadow_file]
     
     try:
         print(f"\nExecuting: {' '.join(command)}\n")
-        subprocess.run(command)
+        subprocess.run(command, timeout=300)
+    except subprocess.TimeoutExpired:
+        print("\nJohn the Ripper timed out after 5 minutes.")
+        print("The password may be very strong or not in the wordlist.")
     except Exception as e:
         print(f"ERROR running John the Ripper: {e}")
         exit(1)
