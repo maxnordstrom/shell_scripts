@@ -15,13 +15,14 @@ MAX_USER_ID = 60000
 PASSWD_FILE = "/etc/passwd"
 SHADOW_FILE = "/etc/shadow"
 WORDLIST_FILE = "/usr/share/wordlists/seclists/Passwords/Common-Credentials/500-worst-passwords.txt"  # Sökväg till wordlist (en inte allt för stor sådan...)
-OUTPUT_DIR = "./output" # Skapar en mapp i samma katalog där scriptet körs
+TMP_OUTPUT_DIR = "./output" 
+REPORT_OUTPUT_DIR = "./output" # Skapar en mapp i samma katalog där scriptet körs
 REPORT_FILE = f"weak_password_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt" # Gör varje rapportnamn unikt med timestamp
 
 def print_header():
     """Print the script header"""
     print("=" * 60)
-    print("Ubuntu Workstation Weak Password Checker")
+    print("Linux Workstation Weak Password Checker")
     print("=" * 60)
     print()
 
