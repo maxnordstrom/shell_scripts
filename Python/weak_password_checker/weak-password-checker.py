@@ -160,8 +160,9 @@ def run_john_the_ripper(shadow_file, wordlist):
     command = ["john", "--format=crypt", "--wordlist=" + wordlist, "--no-log", shadow_file]
     
     try:
-        print(f"\nExecuting: {' '.join(command)}\n")
-        subprocess.run(command, timeout=300)
+        print("Running John the Ripper", end="", flush=True)
+        subprocess.run(command, timeout=300, capture_output=True)
+        print(" Done!")
     except subprocess.TimeoutExpired:
         print("\nJohn the Ripper timed out after 5 minutes.")
         print("The password may be very strong or not in the wordlist.")
