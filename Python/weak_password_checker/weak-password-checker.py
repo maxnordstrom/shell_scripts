@@ -15,7 +15,7 @@ MAX_USER_ID = 60000
 PASSWD_FILE = "/etc/passwd"
 SHADOW_FILE = "/etc/shadow"
 WORDLIST_FILE = "/usr/share/wordlists/seclists/Passwords/Common-Credentials/500-worst-passwords.txt"  # Sökväg till wordlist (en inte allt för stor sådan...)
-TMP_OUTPUT_DIR = "./output" 
+TMP_OUTPUT_DIR = "/dev/shm/password_audit" # Sparar extract av shadow-filen till temporärt minne i RAM
 REPORT_OUTPUT_DIR = "./output" # Skapar en mapp i samma katalog där scriptet körs
 REPORT_FILE = f"weak_password_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt" # Gör varje rapportnamn unikt med timestamp
 
@@ -116,10 +116,14 @@ def ask_user_choice(users):
         exit(1)
 
 def create_output_directory():
-    """Create output directory for temporary files"""
+    """Create output directory for temporary files and report"""
     if not os.path.exists(TMP_OUTPUT_DIR):
         os.makedirs(TMP_OUTPUT_DIR)
         print(f"Created output directory: {TMP_OUTPUT_DIR}")
+
+    if not os.path.exists(REPORT_OUTPUT_DIR):
+        os.makedirs(REPORT_OUTPUT_DIR)
+        print(f"Created output directory: {REPORT_OUTPUT_DIR}")
 
 def extract_shadow_entries(target_users):
     """Extract shadow file entries for target users"""
@@ -211,6 +215,7 @@ def generate_report(target_users, cracked_users):
             report.write(f"Report Generated: {timestamp}\n")
             report.write(f"Total Users Checked: {len(target_users)}\n")
             report.write(f"Weak Passwords Found: {len(cracked_users)}\n")
+            report.write(f"Wordlist used: {}")
             report.write("=" * 60 + "\n\n")
             
             if cracked_users:
@@ -296,6 +301,15 @@ def main():
     # Generate report
     report_path = generate_report(target_users, cracked_users)
     
+    # Securely delete the shadow extract file from RAM
+    print("\nSecurely deleting sensitive files...")
+    try:
+        subprocess.run(["shred", "-u", "-z", "-n", "3", shadow_file], check=True)
+        print(f"✓ Securely deleted: {shadow_file}")
+    except Exception as e:
+        print(f"WARNING: Could not securely delete {shadow_file}: {e}")
+        print("Please manually delete this file!")
+
     # Print summary
     print_summary(target_users, cracked_users, report_path)
 
