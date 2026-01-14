@@ -123,7 +123,7 @@ echo "Choose an option:"
 echo "1) APPLY whitelist"
 echo "2) REMOVE whitelist"
 echo ""
-read -p "Enter your choice (1 or 2): " choice
+read -r -p "Enter your choice (1 or 2): " choice
 
 # Process user choice
 if [ "$choice" = "1" ]; then
