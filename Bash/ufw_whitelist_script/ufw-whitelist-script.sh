@@ -3,6 +3,19 @@
 # Website Whitelist Script for UFW
 # This script applies or removes a website whitelist using UFW firewall
 
+# Check if required tools are installed
+if ! command -v ufw &> /dev/null; then
+    echo "ERROR: UFW is not installed."
+    echo "Install with: sudo apt install ufw"
+    exit 1
+fi
+
+if ! command -v dig &> /dev/null; then
+    echo "ERROR: dig is not installed."
+    echo "Install with: sudo apt install dnsutils"
+    exit 1
+fi
+
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then
     echo "ERROR: This script must be run as root (use sudo)"
