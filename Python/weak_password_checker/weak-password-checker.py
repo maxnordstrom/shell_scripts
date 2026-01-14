@@ -117,13 +117,13 @@ def ask_user_choice(users):
 
 def create_output_directory():
     """Create output directory for temporary files"""
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-        print(f"Created output directory: {OUTPUT_DIR}")
+    if not os.path.exists(TMP_OUTPUT_DIR):
+        os.makedirs(TMP_OUTPUT_DIR)
+        print(f"Created output directory: {TMP_OUTPUT_DIR}")
 
 def extract_shadow_entries(target_users):
     """Extract shadow file entries for target users"""
-    shadow_output_file = os.path.join(OUTPUT_DIR, "shadow_extract.txt")
+    shadow_output_file = os.path.join(TMP_OUTPUT_DIR, "shadow_extract.txt")
     
     print(f"\nExtracting password hashes from {SHADOW_FILE}...")
     
@@ -196,7 +196,7 @@ def get_cracked_passwords(shadow_file):
 
 def generate_report(target_users, cracked_users):
     """Generate the final report"""
-    report_path = os.path.join(OUTPUT_DIR, REPORT_FILE)
+    report_path = os.path.join(REPORT_OUTPUT_DIR, REPORT_FILE)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     print(f"\n{'=' * 60}")
