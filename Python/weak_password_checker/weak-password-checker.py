@@ -215,7 +215,7 @@ def generate_report(target_users, cracked_users):
             report.write(f"Report Generated: {timestamp}\n")
             report.write(f"Total Users Checked: {len(target_users)}\n")
             report.write(f"Weak Passwords Found: {len(cracked_users)}\n")
-            report.write(f"Wordlist used: {os.path.basename(WORDLIST_FILE)}\n")
+            report.write(f"Wordlist Used: {os.path.basename(WORDLIST_FILE)}\n")
             report.write("=" * 60 + "\n\n")
             
             if cracked_users:
