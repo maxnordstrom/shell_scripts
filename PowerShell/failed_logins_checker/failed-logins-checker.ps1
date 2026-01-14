@@ -22,6 +22,19 @@
 # Rapporten skrivs ut till .\reports\Failed-Login-Report-DATUM_TID.txt
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# Inled med att kolla om användaren kör sessionen som Administratör. Om inte - stoppa scriptet.
+function Test-IsAdmin {
+    $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+$isAdmin = Test-IsAdmin
+if (-not $isAdmin) {
+    Write-Host "You need to run the script as Administrator. Stopping script..."
+    exit
+}
+
 # Skapa variabel med dagens datum och aktuell tid att använda till rapportens namn och rubrik.
 $CurrentDateAndTime = (Get-Date -Format 'yyyyMMdd_HHmmss')
 
