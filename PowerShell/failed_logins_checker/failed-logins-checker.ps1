@@ -1,6 +1,3 @@
-# Fixa så det blir lite snyggare timestamp i rapporten (filnamnen är ok)
-# Fixa så man får ett felmeddelande om man inte kör scriptet som Administratör
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # --- Failed Login Attempt Checker ---
 # 
