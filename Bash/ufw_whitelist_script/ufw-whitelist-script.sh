@@ -22,13 +22,17 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Whitelist of allowed websites
-WHITELIST=(
-    "google.com"
-    "youtube.com"
-    "github.com"
-    "stackoverflow.com"
-)
+# Path to whitelist file
+WHITELIST_FILE="./whitelist.txt"
+
+# Check if whitelist file exists
+if [ ! -f "$WHITELIST_FILE" ]; then
+    echo "ERROR: Whitelist file not found: $WHITELIST_FILE"
+    exit 1
+fi
+
+# Read whitelist from file into array
+mapfile -t WHITELIST < "$WHITELIST_FILE"
 
 # Create reports directory if it doesn't exist
 REPORT_DIR="./reports"
