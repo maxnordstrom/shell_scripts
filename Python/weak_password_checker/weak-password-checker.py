@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
-"""
-Weak Password Checker for Ubuntu Workstations
-This script checks if user accounts are using weak passwords.
-Must be run with sudo/root privileges.
-"""
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# --- Weak Password Checker for Linux Workstations---
+# 
+# Scriptet kontrollerar om någon av användarna använder ett svagt lösenord. Detta genom att
+# hämta användarnamn från /etc/passwd, sedan användarnas data i /etc/shadow för att till sist
+# köras av John the Ripper.
+#
+# För att scriptet ska fungera behöver det köras med sudo/root-rättigheter. Scriptet kräver
+# även att john finns installerat och att det finns en tillgänglig wordlist.
+#
+# Scriptet genererar en rapport som sparas i ./reports, alltså i samma katalog där scriptet körs.
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 
 import os
 import subprocess
