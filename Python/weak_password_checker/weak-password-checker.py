@@ -16,25 +16,25 @@ PASSWD_FILE = "/etc/passwd"
 SHADOW_FILE = "/etc/shadow"
 WORDLIST_FILE = "/usr/share/wordlists/seclists/Passwords/Common-Credentials/500-worst-passwords.txt"  # Sökväg till wordlist (en inte allt för stor sådan...)
 TMP_OUTPUT_DIR = "/dev/shm/password_audit" # Sparar extract av shadow-filen till temporärt minne i RAM
-REPORT_OUTPUT_DIR = "./output" # Skapar en mapp i samma katalog där scriptet körs
+REPORT_OUTPUT_DIR = "./reports" # Skapar en mapp i samma katalog där scriptet körs
 REPORT_FILE = f"weak_password_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt" # Gör varje rapportnamn unikt med timestamp
 
+# Skriv ut script header
 def print_header():
-    """Print the script header"""
     print("=" * 60)
     print("Linux Workstation Weak Password Checker")
     print("=" * 60)
     print()
 
+# Kontrollera om scriptet körs med root-rättigheter
 def check_root():
-    """Check if the script is running with root privileges"""
     if os.geteuid() != 0:
         print("ERROR: This script must be run with sudo or as root!")
         print("Please run: sudo python3 weak_password_checker.py")
         exit(1)
 
+# Kontrollera om John the Ripper är installerat
 def check_john_installed():
-    """Check if John the Ripper is installed"""
     try:
         result = subprocess.run(["which", "john"], capture_output=True, text=True)
         if result.returncode != 0:
@@ -45,8 +45,8 @@ def check_john_installed():
         print(f"ERROR checking for John the Ripper: {e}")
         exit(1)
 
+# Kontrollera att ordlistan finns
 def check_wordlist():
-    """Check if wordlist file exists"""
     if not os.path.exists(WORDLIST_FILE):
         print(f"WARNING: Wordlist not found at {WORDLIST_FILE}")
         print("You can download rockyou.txt or use another wordlist.")
@@ -57,8 +57,8 @@ def check_wordlist():
             exit(1)
     return WORDLIST_FILE
 
+# Hämta alla "riktiga" användare från /etc/passwd
 def get_human_users():
-    """Get all human user accounts from /etc/passwd"""
     human_users = []
     
     print(f"Reading user accounts from {PASSWD_FILE}...")
@@ -87,18 +87,18 @@ def get_human_users():
     
     return human_users
 
+# Lista användarna som hittats
 def display_users(users):
-    """Display the list of users found"""
     print(f"\nFound {len(users)} human user account(s):")
     for i, user in enumerate(users, 1):
-        print(f"  {i}. {user}")
+        print(f"  -> {user}")
     print()
 
 def ask_user_choice(users):
     """Ask if user wants to check specific user or all users"""
     print("What would you like to do?")
-    print("1. Check ALL user accounts")
-    print("2. Check a SPECIFIC user account")
+    print(" 1. Check ALL user accounts")
+    print(" 2. Check a SPECIFIC user account")
     
     choice = input("\nEnter your choice (1 or 2): ").strip()
     
