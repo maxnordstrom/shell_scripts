@@ -16,18 +16,18 @@ if ! command -v dig &> /dev/null; then
     exit 1
 fi
 
-# Check if running as root
-if [ "$EUID" -ne 0 ]; then
-    echo "ERROR: This script must be run as root (use sudo)"
-    exit 1
-fi
-
 # Path to whitelist file
 WHITELIST_FILE="./whitelist.txt"
 
 # Check if whitelist file exists
 if [ ! -f "$WHITELIST_FILE" ]; then
     echo "ERROR: Whitelist file not found: $WHITELIST_FILE"
+    exit 1
+fi
+
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then
+    echo "ERROR: This script must be run as root (use sudo)"
     exit 1
 fi
 
