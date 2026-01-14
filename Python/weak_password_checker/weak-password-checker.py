@@ -13,7 +13,6 @@
 # Scriptet genererar en rapport som sparas i ./reports, alltså i samma katalog där scriptet körs.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
 import os
 import subprocess
 import datetime
@@ -103,8 +102,8 @@ def display_users(users):
         print(f"  -> {user}")
     print()
 
+# Prompta om användaren vill kontrollera specifik användare eller alla
 def ask_user_choice(users):
-    """Ask if user wants to check specific user or all users"""
     print("What would you like to do?")
     print(" 1. Check ALL user accounts")
     print(" 2. Check a SPECIFIC user account")
@@ -124,8 +123,8 @@ def ask_user_choice(users):
         print("ERROR: Invalid choice!")
         exit(1)
 
+# Skapa kataloger för output
 def create_output_directory():
-    """Create output directory for temporary files and report"""
     if not os.path.exists(TMP_OUTPUT_DIR):
         os.makedirs(TMP_OUTPUT_DIR)
         print(f"Created output directory: {TMP_OUTPUT_DIR}")
@@ -134,8 +133,8 @@ def create_output_directory():
         os.makedirs(REPORT_OUTPUT_DIR)
         print(f"Created output directory: {REPORT_OUTPUT_DIR}")
 
+# Extrahera aktuella uppgifter från shadow-filen
 def extract_shadow_entries(target_users):
-    """Extract shadow file entries for target users"""
     shadow_output_file = os.path.join(TMP_OUTPUT_DIR, "shadow_extract.txt")
     
     print(f"\nExtracting password hashes from {SHADOW_FILE}...")
@@ -158,14 +157,14 @@ def extract_shadow_entries(target_users):
     
     return shadow_output_file
 
+# Kör John the Ripper mot den extraherade datan
 def run_john_the_ripper(shadow_file, wordlist):
-    """Run John the Ripper against the shadow file"""
     print("\n" + "=" * 60)
     print("Running John the Ripper password cracking...")
     print("This may take some time depending on the wordlist size.")
     print("=" * 60)
     
-    # Kör John the Ripper. Använder ett alternativ så att john inte skapar någon loggfil.
+    # Det exaka kommandot John the Ripper använder
     command = ["john", "--format=crypt", "--wordlist=" + wordlist, "--no-log", shadow_file]
     
     try:
@@ -179,8 +178,8 @@ def run_john_the_ripper(shadow_file, wordlist):
         print(f"ERROR running John the Ripper: {e}")
         exit(1)
 
+# Hämta de knäckta lösenorden
 def get_cracked_passwords(shadow_file):
-    """Get the cracked passwords from John the Ripper"""
     print("\n" + "=" * 60)
     print("Retrieving cracked passwords...")
     print("=" * 60)
@@ -208,8 +207,8 @@ def get_cracked_passwords(shadow_file):
     
     return cracked_users
 
+# Generera rapporten
 def generate_report(target_users, cracked_users):
-    """Generate the final report"""
     report_path = os.path.join(REPORT_OUTPUT_DIR, REPORT_FILE)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
@@ -267,8 +266,8 @@ def print_summary(target_users, cracked_users, report_path):
     else:
         print("\nGood news! No weak passwords were detected.")
 
+# Main function
 def main():
-    """Main function"""
     # Print header
     print_header()
     
