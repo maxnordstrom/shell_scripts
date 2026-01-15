@@ -113,6 +113,7 @@ remove_blocklist_rules_only() {
 
 # Function to remove the blocklist
 remove_blocklist() {
+    echo ""
     echo "Removing blocklist..."
     
     # Remove blocklist rules
