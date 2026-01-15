@@ -107,8 +107,7 @@ remove_blocklist_rules_only() {
     
     # Delete each rule by number
     for rule_num in $rule_numbers; do
-        echo "  Removing rule $rule_num"
-        ufw --force delete "$rule_num"
+        ufw --force delete "$rule_num" > /dev/null 2>&1
     done
 }
 
