@@ -62,10 +62,6 @@ apply_whitelist() {
     
     # Allow DNS (needed to resolve domain names) with comment tag
     ufw allow out 53 comment "$WHITELIST_TAG" > /dev/null 2>&1
-
-    # Allow HTTP and HTTPS (needed to access websites) with comment tag
-    ufw allow out 80 comment "$WHITELIST_TAG" > /dev/null 2>&1
-    ufw allow out 443 comment "$WHITELIST_TAG" > /dev/null 2>&1
     
     # Variables for the report
     REPORT_FILE="$REPORT_DIR/whitelist_report_$(date +%Y%m%d_%H%M%S).txt"
