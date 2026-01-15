@@ -46,22 +46,25 @@ BLOCKLIST_TAG="BLOCKLIST_RULE"
 
 # Function to apply the blocklist
 apply_blocklist() {
-    echo "Applying blocklist..."
-    
+    # Just a newline to make it look nice
+    echo ""
+
     # Enable UFW if not already enabled
     ufw --force enable
     
+    echo "Applying blocklist..."
+    
     # Set default policy to allow outgoing traffic
-    ufw default allow outgoing
-    ufw default deny incoming
-    ufw default allow routed
+    ufw default allow outgoing > /dev/null 2>&1
+    ufw default deny incoming > /dev/null 2>&1
+    ufw default allow routed > /dev/null 2>&1
     
     # Block HTTP (port 80) globally with comment tag
-    ufw deny out 80 comment "$BLOCKLIST_TAG"
+    ufw deny out 80 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
     
     # Allow HTTPS (port 443) globally - this is already allowed by default policy
     # but we can be explicit about it
-    ufw allow out 443 comment "$BLOCKLIST_TAG"
+    ufw allow out 443 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
     
     # Variables for the report
     REPORT_FILE="$REPORT_DIR/blocklist_report_$(date +%Y%m%d_%H%M%S).txt"
@@ -82,7 +85,7 @@ apply_blocklist() {
         
         # Block traffic to each IP address on port 443 with comment tag
         for ip in $ip_addresses; do
-            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG"
+            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
         done
         
         # Add to report
