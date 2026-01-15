@@ -52,16 +52,16 @@ apply_whitelist() {
     ufw --force enable
     
     # Set default policy to deny all outgoing traffic
-    ufw default deny outgoing
-    ufw default deny incoming
-    ufw default allow routed
+    ufw default deny outgoing > /dev/null 2>&1
+    ufw default deny incoming > /dev/null 2>&1
+    ufw default allow routed > /dev/null 2>&1
     
     # Allow local network traffic with comment tag
-    ufw allow out on lo comment "$WHITELIST_TAG"
-    ufw allow in on lo comment "$WHITELIST_TAG"
+    ufw allow out on lo comment "$WHITELIST_TAG" > /dev/null 2>&1
+    ufw allow in on lo comment "$WHITELIST_TAG" > /dev/null 2>&1
     
     # Allow DNS (needed to resolve domain names) with comment tag
-    ufw allow out 53 comment "$WHITELIST_TAG"
+    ufw allow out 53 comment "$WHITELIST_TAG" > /dev/null 2>&1
     
     # Variables for the report
     REPORT_FILE="$REPORT_DIR/whitelist_report_$(date +%Y%m%d_%H%M%S).txt"
@@ -82,7 +82,7 @@ apply_whitelist() {
         
         # Allow traffic to each IP address with comment tag
         for ip in $ip_addresses; do
-            ufw allow out to "$ip" comment "$WHITELIST_TAG"
+            ufw allow out to "$ip" comment "$WHITELIST_TAG" > /dev/null 2>&1
         done
         
         # Add to report
