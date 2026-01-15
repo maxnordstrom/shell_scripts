@@ -1,7 +1,15 @@
 #!/bin/bash
 
-# Port Blocklist Script for UFW
-# This script applies or removes a port blocklist using UFW firewall
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# === Port Blocklist Script for UFW ===
+#
+# This script applies or removes a port blocklist using UFW firewall. 
+# The script needs a list of port numbers as input. Save the list of ports
+# as port_blocklist.txt. 
+#
+# 
+#
+#
 #
 
 # Check if required tools are installed
