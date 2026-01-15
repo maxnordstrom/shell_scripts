@@ -40,10 +40,12 @@ BLOCKLIST_TAG="PORT_BLOCKLIST_RULE"
 
 # Function to apply the blocklist
 apply_blocklist() {
-    echo "Applying port blocklist..."
-    
+    echo "" # Adding newline
+
     # Enable UFW if not already enabled
     ufw --force enable
+    
+    echo "Applying port blocklist..."
     
     # Variables for the report
     REPORT_FILE="$REPORT_DIR/port_blocklist_report_$(date +%Y%m%d_%H%M%S).txt"
@@ -65,13 +67,13 @@ apply_blocklist() {
         echo "  Blocking port: $port"
         
         # Block incoming traffic on this port with comment tag
-        ufw deny in "$port" comment "$BLOCKLIST_TAG"
+        ufw deny in "$port" comment "$BLOCKLIST_TAG" > /dev/null 2>&1
         
         # Block outgoing traffic on this port with comment tag
-        ufw deny out "$port" comment "$BLOCKLIST_TAG"
+        ufw deny out "$port" comment "$BLOCKLIST_TAG" > /dev/null 2>&1
         
         # Add to report
-        echo "  - Port $port (inbound and outbound)" >> "$REPORT_FILE"
+        echo "  - Port $port (in- and outbound)" >> "$REPORT_FILE"
     done
     
     # Reload UFW to apply changes
@@ -89,13 +91,13 @@ remove_blocklist_rules_only() {
     
     # Delete each rule by number
     for rule_num in $rule_numbers; do
-        echo "  Removing rule $rule_num"
-        ufw --force delete "$rule_num"
+        ufw --force delete "$rule_num" > /dev/null 2>&1
     done
 }
 
 # Function to remove the blocklist
 remove_blocklist() {
+    echo ""
     echo "Removing port blocklist..."
     
     # Remove blocklist rules
