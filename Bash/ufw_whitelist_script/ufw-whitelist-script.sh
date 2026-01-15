@@ -2,6 +2,7 @@
 
 # Website Whitelist Script for UFW
 # This script applies or removes a website whitelist using UFW firewall
+#
 
 # Check if required tools are installed
 if ! command -v ufw &> /dev/null; then
@@ -40,6 +41,9 @@ if [ ! -d "$REPORT_DIR" ]; then
     mkdir -p "$REPORT_DIR"
 fi
 
+# Tag used to identify whitelist rules
+WHITELIST_TAG="WHITELIST_RULE"
+
 # Function to apply the whitelist
 apply_whitelist() {
     echo "Applying whitelist..."
@@ -52,12 +56,12 @@ apply_whitelist() {
     ufw default deny incoming
     ufw default allow routed
     
-    # Allow local network traffic
-    ufw allow out on lo
-    ufw allow in on lo
+    # Allow local network traffic with comment tag
+    ufw allow out on lo comment "$WHITELIST_TAG"
+    ufw allow in on lo comment "$WHITELIST_TAG"
     
-    # Allow DNS (needed to resolve domain names)
-    ufw allow out 53
+    # Allow DNS (needed to resolve domain names) with comment tag
+    ufw allow out 53 comment "$WHITELIST_TAG"
     
     # Variables for the report
     REPORT_FILE="$REPORT_DIR/whitelist_report_$(date +%Y%m%d_%H%M%S).txt"
@@ -76,9 +80,9 @@ apply_whitelist() {
         # Resolve the domain to IP addresses
         ip_addresses=$(dig +short "$site" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
         
-        # Allow traffic to each IP address
+        # Allow traffic to each IP address with comment tag
         for ip in $ip_addresses; do
-            ufw allow out to "$ip"
+            ufw allow out to "$ip" comment "$WHITELIST_TAG"
         done
         
         # Add to report
@@ -93,16 +97,27 @@ apply_whitelist() {
     echo "Report saved to: $REPORT_FILE"
 }
 
+# Function to remove only whitelist rules
+remove_whitelist_rules_only() {
+    # Get all rule numbers with the whitelist tag (in reverse order)
+    rule_numbers=$(ufw status numbered | grep "$WHITELIST_TAG" | awk -F'[][]' '{print $2}' | sort -rn)
+    
+    # Delete each rule by number
+    for rule_num in $rule_numbers; do
+        echo "  Removing rule $rule_num"
+        ufw --force delete "$rule_num"
+    done
+}
+
 # Function to remove the whitelist
 remove_whitelist() {
     echo "Removing whitelist..."
     
-    # Reset UFW to default settings
-    ufw --force reset
+    # Remove whitelist rules
+    remove_whitelist_rules_only
     
-    # Set default policy to allow all traffic
-    ufw default allow outgoing
-    ufw default allow incoming
+    # Reload UFW to apply changes
+    ufw reload
     
     # Create warning report
     REPORT_FILE="$REPORT_DIR/whitelist_removed_$(date +%Y%m%d_%H%M%S).txt"
