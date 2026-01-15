@@ -67,7 +67,7 @@ apply_blocklist() {
     CURRENT_TIME=$(date "+%Y-%m-%d %H:%M:%S")
     
     # Start creating the report
-    echo "===== PORT BLOCKLIST APPLIED =====" > "$REPORT_FILE"
+    echo "===== UFW PORT BLOCKLIST APPLIED =====" > "$REPORT_FILE"
     echo "Date and Time: $CURRENT_TIME" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
     echo "Ports added to blocklist:" >> "$REPORT_FILE"
@@ -137,7 +137,7 @@ remove_blocklist() {
 
 # Main script starts here
 echo "=================================="
-echo "  Port Blocklist Manager"
+echo "  UFW Port Blocklist Manager"
 echo "=================================="
 echo ""
 echo "Choose an option:"
