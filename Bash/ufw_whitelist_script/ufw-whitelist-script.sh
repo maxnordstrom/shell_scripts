@@ -82,7 +82,8 @@ apply_whitelist() {
         
         # Allow traffic to each IP address with comment tag
         for ip in $ip_addresses; do
-            ufw allow out to "$ip" comment "$WHITELIST_TAG" > /dev/null 2>&1
+            ufw allow out to "$ip" port 80 comment "$WHITELIST_TAG" > /dev/null 2>&1
+            ufw allow out to "$ip" port 443 comment "$WHITELIST_TAG" > /dev/null 2>&1
         done
         
         # Add to report
