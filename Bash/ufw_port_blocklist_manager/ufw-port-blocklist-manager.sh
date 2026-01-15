@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Website Blocklist Script for UFW
-# This script applies or removes a website blocklist using UFW firewall
+# Port Blocklist Script for UFW
+# This script applies or removes a port blocklist using UFW firewall
 #
 
 # Check if required tools are installed
@@ -11,14 +11,8 @@ if ! command -v ufw &> /dev/null; then
     exit 1
 fi
 
-if ! command -v dig &> /dev/null; then
-    echo "ERROR: dig is not installed."
-    echo "Install with: sudo apt install dnsutils"
-    exit 1
-fi
-
 # Path to blocklist file
-BLOCKLIST_FILE="./blocklist.txt"
+BLOCKLIST_FILE="./port_blocklist.txt"
 
 # Check if blocklist file exists
 if [ ! -f "$BLOCKLIST_FILE" ]; then
@@ -42,69 +36,49 @@ if [ ! -d "$REPORT_DIR" ]; then
 fi
 
 # Tag used to identify blocklist rules
-BLOCKLIST_TAG="BLOCKLIST_RULE"
+BLOCKLIST_TAG="PORT_BLOCKLIST_RULE"
 
 # Function to apply the blocklist
 apply_blocklist() {
-    # Just a newline to make it look nice
-    echo ""
-
+    echo "Applying port blocklist..."
+    
     # Enable UFW if not already enabled
     ufw --force enable
     
-    echo "Applying blocklist..."
-    
-    # Set default policy to allow outgoing traffic
-    ufw default allow outgoing > /dev/null 2>&1
-    ufw default deny incoming > /dev/null 2>&1
-    ufw default allow routed > /dev/null 2>&1
-    
-    # Block HTTP (port 80) globally with comment tag
-    ufw deny out 80 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
-    
-    # Allow HTTPS (port 443) globally - this is already allowed by default policy
-    # but we can be explicit about it
-    ufw allow out 443 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
-    
     # Variables for the report
-    REPORT_FILE="$REPORT_DIR/blocklist_report_$(date +%Y%m%d_%H%M%S).txt"
+    REPORT_FILE="$REPORT_DIR/port_blocklist_report_$(date +%Y%m%d_%H%M%S).txt"
     CURRENT_TIME=$(date "+%Y-%m-%d %H:%M:%S")
     
     # Start creating the report
-    echo "===== BLOCKLIST APPLIED =====" > "$REPORT_FILE"
+    echo "===== PORT BLOCKLIST APPLIED =====" > "$REPORT_FILE"
     echo "Date and Time: $CURRENT_TIME" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
-    echo "Websites added to blocklist:" >> "$REPORT_FILE"
+    echo "Ports added to blocklist:" >> "$REPORT_FILE"
     
-    # Loop through each website in the blocklist
-    for site in "${BLOCKLIST[@]}"; do
-        echo "  Blocking: $site"
+    # Loop through each port in the blocklist
+    for port in "${BLOCKLIST[@]}"; do
+        # Skip empty lines
+        if [ -z "$port" ]; then
+            continue
+        fi
         
-        # Resolve the domain to IPv4 addresses
-        ipv4_addresses=$(dig +short "$site" A | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+        echo "  Blocking port: $port"
         
-        # Resolve the domain to IPv6 addresses
-        ipv6_addresses=$(dig +short "$site" AAAA | grep -E '^[0-9a-f:]+$')
+        # Block incoming traffic on this port with comment tag
+        ufw deny in "$port" comment "$BLOCKLIST_TAG"
         
-        # Block traffic to each IPv4 address on port 443 with comment tag
-        for ip in $ipv4_addresses; do
-            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG"
-        done
-        
-        # Block traffic to each IPv6 address on port 443 with comment tag
-        for ip in $ipv6_addresses; do
-            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG"
-        done
+        # Block outgoing traffic on this port with comment tag
+        ufw deny out "$port" comment "$BLOCKLIST_TAG"
         
         # Add to report
-        echo "  - $site" >> "$REPORT_FILE"
+        echo "  - Port $port (inbound and outbound)" >> "$REPORT_FILE"
     done
     
     # Reload UFW to apply changes
     ufw reload
     
     echo ""
-    echo "✓ BLOCKLIST APPLIED SUCCESSFULLY"
+    echo "✓ PORT BLOCKLIST APPLIED SUCCESSFULLY"
     echo "Report saved to: $REPORT_FILE"
 }
 
@@ -115,14 +89,14 @@ remove_blocklist_rules_only() {
     
     # Delete each rule by number
     for rule_num in $rule_numbers; do
-        ufw --force delete "$rule_num" > /dev/null 2>&1
+        echo "  Removing rule $rule_num"
+        ufw --force delete "$rule_num"
     done
 }
 
 # Function to remove the blocklist
 remove_blocklist() {
-    echo ""
-    echo "Removing blocklist..."
+    echo "Removing port blocklist..."
     
     # Remove blocklist rules
     remove_blocklist_rules_only
@@ -131,27 +105,27 @@ remove_blocklist() {
     ufw reload
     
     # Create warning report
-    REPORT_FILE="$REPORT_DIR/blocklist_removed_$(date +%Y%m%d_%H%M%S).txt"
+    REPORT_FILE="$REPORT_DIR/port_blocklist_removed_$(date +%Y%m%d_%H%M%S).txt"
     CURRENT_TIME=$(date "+%Y-%m-%d %H:%M:%S")
     
     echo "===== WARNING! =====" > "$REPORT_FILE"
     echo "Date and Time: $CURRENT_TIME" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
-    echo "Warning! The blocklist has been removed, all websites are now accessible." >> "$REPORT_FILE"
+    echo "Warning! The port blocklist has been removed, all ports are now unblocked." >> "$REPORT_FILE"
     
     echo ""
-    echo "✓ BLOCKLIST REMOVED SUCCESSFULLY"
+    echo "✓ PORT BLOCKLIST REMOVED SUCCESSFULLY"
     echo "Report saved to: $REPORT_FILE"
 }
 
 # Main script starts here
 echo "=================================="
-echo "  Website Blocklist Manager"
+echo "  Port Blocklist Manager"
 echo "=================================="
 echo ""
 echo "Choose an option:"
-echo "1) APPLY blocklist"
-echo "2) REMOVE blocklist"
+echo "1) APPLY port blocklist"
+echo "2) REMOVE port blocklist"
 echo ""
 read -r -p "Enter your choice (1 or 2): " choice
 
