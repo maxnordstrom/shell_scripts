@@ -80,12 +80,20 @@ apply_blocklist() {
     for site in "${BLOCKLIST[@]}"; do
         echo "  Blocking: $site"
         
-        # Resolve the domain to IP addresses
-        ip_addresses=$(dig +short "$site" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+        # Resolve the domain to IPv4 addresses
+        ipv4_addresses=$(dig +short "$site" A | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
         
-        # Block traffic to each IP address on port 443 with comment tag
-        for ip in $ip_addresses; do
-            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG" > /dev/null 2>&1
+        # Resolve the domain to IPv6 addresses
+        ipv6_addresses=$(dig +short "$site" AAAA | grep -E '^[0-9a-f:]+$')
+        
+        # Block traffic to each IPv4 address on port 443 with comment tag
+        for ip in $ipv4_addresses; do
+            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG"
+        done
+        
+        # Block traffic to each IPv6 address on port 443 with comment tag
+        for ip in $ipv6_addresses; do
+            ufw deny out to "$ip" port 443 comment "$BLOCKLIST_TAG"
         done
         
         # Add to report
