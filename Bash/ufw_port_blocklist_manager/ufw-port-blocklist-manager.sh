@@ -1,16 +1,23 @@
 #!/bin/bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# === Port Blocklist Script for UFW ===
+# === Port Blocklist Manager for UFW ===
 #
-# This script applies or removes a port blocklist using UFW firewall. 
-# The script needs a list of port numbers as input. Save the list of ports
-# as port_blocklist.txt. 
-#
+# Detta script används för att göra en mini-härdning av en klient. Scriptet 
+# använder sig av UFW och lägger till eller tar bort en blocklista med portar. 
 # 
+# Spara listan med portnummer som port_blocklist.txt i samma katalog som
+# scriptet körs från.
 #
+# Scriptet behöver köras med sudo/root-rättigheter för att fungera.
 #
+# Starta scriptet genom att köra sudo ./ufw-port-blocklist-manager.sh
 #
+# Användaren har möjlighet att aktivera blocklistan (val 1) 
+# eller ta bort den (val 2)
+#
+# En rapport genereras i ./reports för att redovisa vad som skett.
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Check if required tools are installed
 if ! command -v ufw &> /dev/null; then
