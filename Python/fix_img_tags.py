@@ -2,13 +2,8 @@
 """
 Fix Obsidian-style image embeds in markdown.
 
-Step 1:
   Find:    ![[Pasted image 20260601123540.png]]
   Replace: ![Screenshot](img/Pasted%20image%2020260601123540.png)
-
-Step 2:
-  In the resulting URL, replace spaces with %20
-  (handles the filename inside the parens)
 
 Yes, Claude helped me out.
 """
