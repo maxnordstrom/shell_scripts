@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
 Fix Obsidian-style image embeds in markdown.
-
   Find:    ![[Pasted image 20260601123540.png]]
   Replace: ![Screenshot](img/Pasted%20image%2020260601123540.png)
+
+Usage:
+  python3 fix_img_tags.py <your_file.md>
 
 Yes, Claude helped me out.
 """
